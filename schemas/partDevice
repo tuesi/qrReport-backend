@@ -1,0 +1,17 @@
+const mongoose = require('mongoose');
+
+const PartDeviceSchema = new mongoose.Schema({
+    deviceMap: {
+        type: String,
+        required: true
+    },
+    mapOfArrays: {
+        type: Map,
+        of: [{
+            name: String,
+            hasLowAmmount: Boolean
+        }]
+    }
+})
+
+module.exports = mongoose.model('PartDevice', PartDeviceSchema);
