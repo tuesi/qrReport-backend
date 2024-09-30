@@ -1,15 +1,19 @@
 const mongoose = require('mongoose');
 
 const ReportSchema = new mongoose.Schema({
+    deviceId: {
+        type: String,
+        required: true
+    },
     name: {
         type: String,
         required: true
     },
-    message: {
+    notes: {
         type: String,
         required: false
     },
-    notes: {
+    message: {
         type: String,
         required: false
     },
@@ -17,15 +21,23 @@ const ReportSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    deviceId: {
+    imageName: {
+        type: String,
+        required: false
+    },
+    createdBy: {
         type: String,
         required: true
     },
-    created: {
-        type: Date,
+    completed: {
+        type: Boolean,
         required: true
     },
     dateCompleted: {
+        type: Date,
+        required: false
+    },
+    created: {
         type: Date,
         required: true
     }

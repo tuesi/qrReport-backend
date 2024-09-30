@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
+const deviceRoutes = require('./routes/devices');
+const reportRoutes = require('./routes/reports');
 
 const app = express();
 
@@ -13,13 +15,14 @@ mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.log(err));
 
-// Basic route
-app.get('/', (req, res) => {
-    res.send('Welcome to the React Native Backend');
-});
 
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
+app.use('/api', deviceRoutes);
+app.use('/api', reportRoutes);
+
+//ngrok http 5000
