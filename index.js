@@ -2,8 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
-const deviceRoutes = require('./routes/devices');
-const reportRoutes = require('./routes/reports');
+const loadRoutes = require('./util/routeLoader');
 
 const app = express();
 
@@ -22,7 +21,7 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-app.use('/api', deviceRoutes);
-app.use('/api', reportRoutes);
+//Load routes from routes folder
+loadRoutes(app);
 
 //ngrok http 5000
