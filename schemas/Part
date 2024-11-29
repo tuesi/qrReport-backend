@@ -5,6 +5,10 @@ const PartSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    location: {
+        type: String,
+        required: false
+    },
     notes: {
         type: String,
         required: false

@@ -8,10 +8,10 @@ const PartDeviceSchema = new mongoose.Schema({
     },
     mapOfArrays: {
         type: Map,
-        of: [{
+        of: {
             name: String,
-            hasLowAmmount: Boolean
-        }]
+            hasLowAmount: Boolean
+        }
     }
 })
 

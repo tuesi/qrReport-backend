@@ -1,7 +1,6 @@
 const PartDevice = require('../schemas/PartDevice');
 
-const setPartDevice = async (deviceData) => {
-
+const setPartDevice = async (deviceData, amount, minAmount) => {
     try {
         let partDevices = await PartDevice.findOne({ deviceMap: 'partDevices' });
 
@@ -9,20 +8,18 @@ const setPartDevice = async (deviceData) => {
             // Create a new PartDevice if it doesn't exist
             partDevices = new PartDevice({
                 deviceMap: 'partDevices',
-                mapOfArrays: {}
+                mapOfArrays: new Map()
             });
         }
 
-        if (!partDevices.mapOfArrays[deviceData.deviceId]) {
-            partDevices.mapOfArrays[deviceData.deviceId] = [{ name: deviceData.name, hasLowAmmount: false }];
-        } else {
-            partDevices.mapOfArrays[deviceId] = partDevices.mapOfArrays[deviceId].map(() => {
-                return {
-                    deviceName: deviceName,
-                    hasLowAmmount: false
-                };
-            });
-        }
+        const hasLowAmount = amount < minAmount;
+
+        partDevices.mapOfArrays.set(deviceData.id,
+            {
+                name: deviceData.name,
+                hasLowAmount
+            }
+        );
 
         await partDevices.save();
     } catch (error) {

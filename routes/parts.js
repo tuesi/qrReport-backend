@@ -7,10 +7,11 @@ const setPartDevice = require('../services/partDeviceService');
 router.post('/parts', async (req, res) => {
     try {
         const { partData, deviceData } = req.body;
-        const { name, notes, imageName, deviceId, amount, minAmount } = partData;
+        const { name, notes, location, imageName, deviceId, amount, minAmount } = partData;
         const newPart = new Part({
             name,
             notes,
+            location,
             imageName,
             deviceId,
             amount,
@@ -20,7 +21,7 @@ router.post('/parts', async (req, res) => {
         await newPart.save();
 
         //Create part device for part list
-        await setPartDevice(deviceData);
+        await setPartDevice(deviceData, amount, minAmount);
 
         res.status(201).json(newPart);
     } catch (error) {
@@ -28,7 +29,7 @@ router.post('/parts', async (req, res) => {
     }
 });
 
-router.patch('/parts/"partId', async (req, res) => {
+router.patch('/parts/:partId', async (req, res) => {
     try {
         const { partId } = req.params;
         const { partData, deviceData } = req.body;
@@ -39,7 +40,7 @@ router.patch('/parts/"partId', async (req, res) => {
             return res.status(404).json({ message: 'Part not found' });
         } else {
             //Update part device for part list
-            await setPartDevice(deviceData);
+            await setPartDevice(deviceData, partData.amount, partData.minAmount);
             //Return updated part
             res.status(200).json(updatePart);
         }
@@ -49,9 +50,12 @@ router.patch('/parts/"partId', async (req, res) => {
     }
 });
 
-router.get('/parts', async (req, res) => {
+router.get('/parts/:deviceId', async (req, res) => {
     try {
-        const parts = await Part.find();
+        const { deviceId } = req.params;
+        console.log(deviceId);
+        const parts = await Part.find({ deviceId: deviceId });
+        console.log(parts);
         res.status(200).json(parts);
     } catch (error) {
         res.status(500).json({ message: error.message });

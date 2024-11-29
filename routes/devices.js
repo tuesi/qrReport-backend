@@ -21,7 +21,14 @@ router.post('/devices', async (req, res) => {
 
 router.get('/devices', async (req, res) => {
     try {
-        const devices = await Device.find();
+        const limit = parseInt(req.query.limit) || 4;
+        const lastCreatedDate = req.query.lastCreatedDate;
+
+        const query = lastCreatedDate
+            ? { created: { $lt: new Date(lastCreatedDate) } }
+            : {};
+
+        const devices = await Device.find(query).sort({ created: -1 }).limit(limit);
         res.status(200).json(devices);
     } catch (error) {
         res.status(500).json({ message: error.message });
