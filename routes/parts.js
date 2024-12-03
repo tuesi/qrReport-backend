@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Part = require('../schemas/Part');
-const setPartDevice = require('../services/partDeviceService');
+const { setPartDevice, updatePartDevice } = require('../services/partDeviceService');
 
 
 router.post('/parts', async (req, res) => {
@@ -29,10 +29,9 @@ router.post('/parts', async (req, res) => {
     }
 });
 
-router.patch('/parts/:partId', async (req, res) => {
+router.patch('/parts', async (req, res) => {
     try {
-        const { partId } = req.params;
-        const { partData, deviceData } = req.body;
+        const { partId, partData, deviceId } = req.body;
 
         const updatePart = await Part.findByIdAndUpdate(partId, partData, { new: true, runValidators: true });
 
@@ -40,7 +39,7 @@ router.patch('/parts/:partId', async (req, res) => {
             return res.status(404).json({ message: 'Part not found' });
         } else {
             //Update part device for part list
-            await setPartDevice(deviceData, partData.amount, partData.minAmount);
+            await updatePartDevice(deviceId, partData.amount, partData.minAmount);
             //Return updated part
             res.status(200).json(updatePart);
         }
@@ -50,12 +49,20 @@ router.patch('/parts/:partId', async (req, res) => {
     }
 });
 
-router.get('/parts/:deviceId', async (req, res) => {
+router.get('/parts', async (req, res) => {
     try {
-        const { deviceId } = req.params;
+        const { deviceId, lastCreatedDate } = req.query;
+
+        limit = parseInt(req.query.limit) || 4;
+
         console.log(deviceId);
-        const parts = await Part.find({ deviceId: deviceId });
-        console.log(parts);
+        console.log(lastCreatedDate);
+
+        const query = lastCreatedDate
+            ? { deviceId: deviceId, created: { $lt: new Date(lastCreatedDate) } }
+            : { deviceId: deviceId };
+
+        const parts = await Part.find(query).sort({ created: -1 }).limit(limit);
         res.status(200).json(parts);
     } catch (error) {
         res.status(500).json({ message: error.message });
