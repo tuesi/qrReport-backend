@@ -63,6 +63,22 @@ router.patch('/devices/:deviceId', async (req, res) => {
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
-})
+});
+
+router.delete('/devices/:deviceId', async (req, res) => {
+    try {
+        const { deviceId } = req.params;
+
+        const deletedDevice = await Device.findByIdAndDelete(deviceId);
+
+        if (!deletedDevice) {
+            res.status(400).json({ message: 'Device not found' });
+        }
+
+        res.json({ message: "Device deleted successfully", deletedDevice });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
 module.exports = router;

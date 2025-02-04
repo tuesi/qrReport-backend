@@ -55,15 +55,28 @@ router.get('/parts', async (req, res) => {
 
         limit = parseInt(req.query.limit) || 4;
 
-        console.log(deviceId);
-        console.log(lastCreatedDate);
-
         const query = lastCreatedDate
             ? { deviceId: deviceId, created: { $lt: new Date(lastCreatedDate) } }
             : { deviceId: deviceId };
 
         const parts = await Part.find(query).sort({ created: -1 }).limit(limit);
         res.status(200).json(parts);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+router.delete('/parts/:partId', async (req, res) => {
+    try {
+        const { partId } = req.params;
+
+        const deletedPart = await Part.findByIdAndDelete(partId);
+
+        if (!deletedPart) {
+            res.status(400).json({ message: 'Part not found' });
+        }
+
+        res.json({ message: "Part deleted successfully", deletedPart });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
